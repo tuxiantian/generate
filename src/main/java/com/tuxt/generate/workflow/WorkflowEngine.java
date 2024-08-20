@@ -25,6 +25,7 @@ public class WorkflowEngine implements CommandLineRunner , ApplicationListener<W
     }
 
 
+    @Async("myAsyncExecutor")
     @Override
     public void onApplicationEvent(WorkFlowEvent event) {
         WorkFlow workFlow = (WorkFlow) event.getSource();
