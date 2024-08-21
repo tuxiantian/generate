@@ -20,6 +20,16 @@ public enum WorkFlow {
         return null;
     }
 
+    public static  int getIndexByName(WorkFlow workFlow,String name){
+        String[] tasks = workFlow.taskTemplate.split(",");
+        for (int i = 0; i < tasks.length; i++) {
+            if (tasks[i].equals(name)){
+                return i;
+            }
+        }
+        return 0;
+    }
+
     public String getName() {
         return name;
     }

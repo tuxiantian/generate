@@ -41,8 +41,15 @@ public class WorkflowEngine implements CommandLineRunner , ApplicationListener<W
 
     private void execute(Long workFlowInstanceId) {
         WorkFlowInstance workFlowInstance = workFlowInstanceService.getById(workFlowInstanceId);
-        String[] tasks = WorkFlow.getByName(workFlowInstance.getName()).getTaskTemplate().split(",");
+        if (workFlowInstance==null){
+            log.error("WorkFlowInstance {} not exists ",workFlowInstanceId);
+        }
+        WorkFlow workFlow = WorkFlow.getByName(workFlowInstance.getName());
+        String[] tasks = workFlow.getTaskTemplate().split(",");
         int lastTask = 0;
+        if (workFlowInstance.getLastTask()!=null){
+            lastTask =WorkFlow.getIndexByName(workFlow,workFlowInstance.getLastTask());
+        }
         Context context = JSON.parseObject(workFlowInstance.getContext(), Context.class);
         context.setWorkFlowInstanceId(workFlowInstanceId);
         while (lastTask < tasks.length) {
