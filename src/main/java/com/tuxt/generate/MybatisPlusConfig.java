@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@MapperScan("com.tuxt.generate.gen.mapper")
+@MapperScan({"com.tuxt.generate.gen.mapper","com.tuxt.generate.workflow.mapper"})
 public class MybatisPlusConfig {
 
     /**

@@ -11,11 +11,24 @@ public enum WorkFlow {
         this.taskTemplate=taskTemplate;
     }
 
+    public static WorkFlow getByName(String name){
+        for (WorkFlow value : WorkFlow.values()) {
+            if (value.name.equals(name)){
+                return value;
+            }
+        }
+        return null;
+    }
+
     public String getName() {
         return name;
     }
 
     public String getTaskTemplate() {
         return taskTemplate;
+    }
+
+    public String getFirstTask(){
+        return this.taskTemplate.split(",")[0];
     }
 }

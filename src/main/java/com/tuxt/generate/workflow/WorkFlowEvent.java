@@ -5,7 +5,6 @@ import org.springframework.context.ApplicationEvent;
 import java.time.Clock;
 
 public class WorkFlowEvent extends ApplicationEvent {
-    private Long businessId;
     public WorkFlowEvent(Object source) {
         super(source);
     }
@@ -14,12 +13,4 @@ public class WorkFlowEvent extends ApplicationEvent {
         super(source, clock);
     }
 
-    public WorkFlowEvent(Object source,Long businessId) {
-        super(source);
-        this.businessId=businessId;
-    }
-
-    public Long getBusinessId() {
-        return businessId;
-    }
 }
