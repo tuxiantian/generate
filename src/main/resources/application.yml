@@ -1,6 +1,8 @@
 spring:
   application:
     name: generate
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
@@ -18,3 +20,4 @@ mybatis-plus:
       logic-not-delete-value: 0 # 逻辑未删除值
 server:
   port: 8081
+  shutdown: graceful
