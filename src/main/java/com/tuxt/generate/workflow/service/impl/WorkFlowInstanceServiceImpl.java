@@ -10,21 +10,21 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 
 /**
-* @author tuxt
-*/
+ * @author tuxt
+ */
 @Service
 public class WorkFlowInstanceServiceImpl extends ServiceImpl<WorkFlowInstanceMapper, WorkFlowInstance> implements IWorkFlowInstanceService {
 
     @Override
-    public void updateStatus(Long id, WorkflowStatus status, String lastTask, String context, String errorMessage){
-        WorkFlowInstance workFlowInstance=new WorkFlowInstance();
+    public void updateStatus(Long id, WorkflowStatus status, String lastTask, String context, String errorMessage) {
+        WorkFlowInstance workFlowInstance = new WorkFlowInstance();
         workFlowInstance.setId(id);
         workFlowInstance.setUpdateDate(new Date());
-        if (lastTask!=null){
+        if (lastTask != null) {
             workFlowInstance.setLastTask(lastTask);
         }
         workFlowInstance.setStatus(status.name());
-        if (errorMessage!=null){
+        if (errorMessage != null) {
             workFlowInstance.setErrorMessage(errorMessage);
         }
 
@@ -34,8 +34,17 @@ public class WorkFlowInstanceServiceImpl extends ServiceImpl<WorkFlowInstanceMap
     }
 
     @Override
-    public void updateStatus(Long id,WorkflowStatus status,String lastTask,String context){
-        this.updateStatus(id,status,lastTask,context,null);
+    public void updateStatus(Long id, String errorMessage) {
+        WorkFlowInstance workFlowInstance = new WorkFlowInstance();
+        workFlowInstance.setId(id);
+        workFlowInstance.setUpdateDate(new Date());
+        workFlowInstance.setErrorMessage(errorMessage);
+        this.updateById(workFlowInstance);
+    }
+
+    @Override
+    public void updateStatus(Long id, WorkflowStatus status, String lastTask, String context) {
+        this.updateStatus(id, status, lastTask, context, null);
     }
 }
 

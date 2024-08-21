@@ -11,6 +11,8 @@ public interface IWorkFlowInstanceService extends IService<WorkFlowInstance> {
 
     void updateStatus(Long id, WorkflowStatus status, String lastTask,String context, String errorMessage);
 
+    void updateStatus(Long id, String errorMessage);
+
     void updateStatus(Long id, WorkflowStatus status, String lastTask, String context);
 }
 

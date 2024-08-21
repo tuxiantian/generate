@@ -44,6 +44,7 @@ public class WorkflowEngine implements CommandLineRunner , ApplicationListener<W
         String[] tasks = WorkFlow.getByName(workFlowInstance.getName()).getTaskTemplate().split(",");
         int lastTask = 0;
         Context context = JSON.parseObject(workFlowInstance.getContext(), Context.class);
+        context.setWorkFlowInstanceId(workFlowInstanceId);
         while (lastTask < tasks.length) {
             try {
                 workFlowInstanceService.updateStatus(workFlowInstanceId,WorkflowStatus.runing,tasks[lastTask],JSON.toJSONString(context));

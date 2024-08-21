@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class Context {
     private Long businessId;
+    private Long workFlowInstanceId;
     public Context() {
     }
 
