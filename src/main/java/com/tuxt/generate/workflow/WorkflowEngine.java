@@ -12,7 +12,6 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import java.util.Map;
@@ -44,10 +43,6 @@ public class WorkflowEngine implements CommandLineRunner , ApplicationListener<W
     public void run(String... args) throws Exception {
         Map<String, Task> beansMap = applicationContext.getBeansOfType(Task.class);
         taskMap.putAll(beansMap);
-    }
-
-    @PostConstruct
-    public void processShutdown(){
         while (hasShutdown.get()){
             WorkFlowInstance workFlowInstance = workFlowInstanceService.getOneShutdown();
             if (workFlowInstance!=null){

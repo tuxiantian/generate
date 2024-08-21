@@ -36,6 +36,9 @@ public class WorkFlowInstanceServiceImpl extends ServiceImpl<WorkFlowInstanceMap
         queryWrapper.eq(WorkFlowInstance::getShutdown,1)
                 .eq(WorkFlowInstance::getStatus,WorkflowStatus.runing.name()).orderByAsc(WorkFlowInstance::getId);
         WorkFlowInstance workFlowInstance = this.getOne(queryWrapper);
+        if (workFlowInstance==null){
+            return null;
+        }
         WorkFlowInstance update=new WorkFlowInstance();
         update.setShutdown(0);
         update.setVersion(workFlowInstance.getVersion()+1);
