@@ -17,7 +17,7 @@ import java.util.Scanner;
 public class CodeGenerator {
 
     // 数据库 URL
-    private static final String URL = "jdbc:mysql://127.0.0.1:3306/workflow?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
+    private static final String URL = "jdbc:mysql://127.0.0.1:3306/test?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
     // 数据库驱动
     private static final String DRIVER_NAME = "com.mysql.cj.jdbc.Driver";
     // 数据库用户名
@@ -25,9 +25,9 @@ public class CodeGenerator {
     // 数据库密码
     private static final String PASSWORD = "123456";
     // @author 值
-    private static final String AUTHOR = "tuxt";
+    private static final String AUTHOR = "tuxiantian";
     // 包的基础路径
-    private static final String BASE_PACKAGE_URL = "com.tuxt.generate";
+    private static final String BASE_PACKAGE_URL = "com.fawkes.project.user.common";
     // xml文件路径
     private static final String XML_PACKAGE_URL = "/src/main/resources/mapper/";
     // xml 文件模板
@@ -49,12 +49,14 @@ public class CodeGenerator {
         // 全局配置
         GlobalConfig globalConfig = new GlobalConfig();
         String projectPath = System.getProperty("user.dir");
-        projectPath="C:\\Users\\tuxia\\Documents\\idea\\generate";
+        projectPath="C:\\workspace\\cybereng-user-api";
         globalConfig.setOutputDir(projectPath + "/src/main/java");
         globalConfig.setAuthor(AUTHOR);
         globalConfig.setOpen(false);
         globalConfig.setFileOverride(false);
         globalConfig.setSwagger2(true);
+        globalConfig.setBaseColumnList(true);
+        globalConfig.setBaseResultMap(true);
         generator.setGlobalConfig(globalConfig);
 
         // 数据源配置
@@ -67,7 +69,7 @@ public class CodeGenerator {
 
         // 包配置
         PackageConfig packageConfig = new PackageConfig();
-        packageConfig.setModuleName("gen");
+//        packageConfig.setModuleName("gen");
         packageConfig.setParent(BASE_PACKAGE_URL);
         generator.setPackageInfo(packageConfig);
 
@@ -81,31 +83,37 @@ public class CodeGenerator {
         templateConfig.setController(CONTROLLER_TEMPLATE_PATH);
         generator.setTemplate(templateConfig);
 
+        generator.setTemplateEngine(new FreemarkerTemplateEngine());
+
         // 策略配置
         StrategyConfig strategy = new StrategyConfig();
         strategy.setNaming(NamingStrategy.underline_to_camel);
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
         strategy.setEntityLombokModel(true);
         strategy.setRestControllerStyle(true);
-        strategy.setInclude(scanner("表名"));
 //        strategy.setSuperEntityColumns("id");
         strategy.setControllerMappingHyphenStyle(false);
         strategy.setTablePrefix(packageConfig.getModuleName() + "_");
-        generator.setStrategy(strategy);
-        generator.setTemplateEngine(new FreemarkerTemplateEngine());
-        generator.execute();
+        strategy.setLogicDeleteFieldName("delete_flag");
+
+        boolean continueRunning = true;
+        Scanner scanner = new Scanner(System.in);
+        while (continueRunning) {
+            System.out.println("请输入表名，输入'exit'退出程序：");
+            String input = scanner.nextLine();
+
+            if ("exit".equalsIgnoreCase(input)) {
+                continueRunning = false;
+                System.out.println("程序已退出。");
+                break;
+            }
+            strategy.setInclude(input);
+            generator.setStrategy(strategy);
+
+            generator.execute();
+        }
+        scanner.close();
     }
 
-    private static String scanner(String tip) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println(("请输入" + tip + "："));
-        if (scanner.hasNext()) {
-            String ipt = scanner.next();
-            if (null != ipt && !"".equals(ipt)) {
-                return ipt;
-            }
-        }
-        throw new MybatisPlusException("请输入正确的" + tip + "！");
-    }
 }
 
