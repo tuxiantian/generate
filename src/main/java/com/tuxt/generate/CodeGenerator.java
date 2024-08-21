@@ -44,57 +44,7 @@ public class CodeGenerator {
     private static final String CONTROLLER_TEMPLATE_PATH = "templates/controller.java";
 
     public static void main(String[] args) {
-        AutoGenerator generator = new AutoGenerator();
-        //project_change_manage
-        // 全局配置
-        GlobalConfig globalConfig = new GlobalConfig();
-        String projectPath = System.getProperty("user.dir");
-        projectPath="C:\\workspace\\cybereng-user-api";
-        globalConfig.setOutputDir(projectPath + "/src/main/java");
-        globalConfig.setAuthor(AUTHOR);
-        globalConfig.setOpen(false);
-        globalConfig.setFileOverride(false);
-        globalConfig.setSwagger2(true);
-        globalConfig.setBaseColumnList(true);
-        globalConfig.setBaseResultMap(true);
-        generator.setGlobalConfig(globalConfig);
 
-        // 数据源配置
-        DataSourceConfig dataSourceConfig = new DataSourceConfig();
-        dataSourceConfig.setUrl(URL);
-        dataSourceConfig.setDriverName(DRIVER_NAME);
-        dataSourceConfig.setUsername(USERNAME);
-        dataSourceConfig.setPassword(PASSWORD);
-        generator.setDataSource(dataSourceConfig);
-
-        // 包配置
-        PackageConfig packageConfig = new PackageConfig();
-//        packageConfig.setModuleName("gen");
-        packageConfig.setParent(BASE_PACKAGE_URL);
-        generator.setPackageInfo(packageConfig);
-
-        // 配置自定义代码模板
-        TemplateConfig templateConfig = new TemplateConfig();
-        templateConfig.setXml(XML_MAPPER_TEMPLATE_PATH);
-        templateConfig.setMapper(MAPPER_TEMPLATE_PATH);
-        templateConfig.setEntity(ENTITY_TEMPLATE_PATH);
-        templateConfig.setService(SERVICE_TEMPLATE_PATH);
-        templateConfig.setServiceImpl(SERVICE_IMPL_TEMPLATE_PATH);
-        templateConfig.setController(CONTROLLER_TEMPLATE_PATH);
-        generator.setTemplate(templateConfig);
-
-        generator.setTemplateEngine(new FreemarkerTemplateEngine());
-
-        // 策略配置
-        StrategyConfig strategy = new StrategyConfig();
-        strategy.setNaming(NamingStrategy.underline_to_camel);
-        strategy.setColumnNaming(NamingStrategy.underline_to_camel);
-        strategy.setEntityLombokModel(true);
-        strategy.setRestControllerStyle(true);
-//        strategy.setSuperEntityColumns("id");
-        strategy.setControllerMappingHyphenStyle(false);
-        strategy.setTablePrefix(packageConfig.getModuleName() + "_");
-        strategy.setLogicDeleteFieldName("delete_flag");
 
         boolean continueRunning = true;
         Scanner scanner = new Scanner(System.in);
@@ -107,6 +57,57 @@ public class CodeGenerator {
                 System.out.println("程序已退出。");
                 break;
             }
+            AutoGenerator generator = new AutoGenerator();
+            //project_change_manage
+            // 全局配置
+            GlobalConfig globalConfig = new GlobalConfig();
+            String projectPath = System.getProperty("user.dir");
+            projectPath="C:\\workspace\\cybereng-user-api";
+            globalConfig.setOutputDir(projectPath + "/src/main/java");
+            globalConfig.setAuthor(AUTHOR);
+            globalConfig.setOpen(false);
+            globalConfig.setFileOverride(false);
+            globalConfig.setSwagger2(true);
+            globalConfig.setBaseColumnList(true);
+            globalConfig.setBaseResultMap(true);
+            generator.setGlobalConfig(globalConfig);
+
+            // 数据源配置
+            DataSourceConfig dataSourceConfig = new DataSourceConfig();
+            dataSourceConfig.setUrl(URL);
+            dataSourceConfig.setDriverName(DRIVER_NAME);
+            dataSourceConfig.setUsername(USERNAME);
+            dataSourceConfig.setPassword(PASSWORD);
+            generator.setDataSource(dataSourceConfig);
+
+            // 包配置
+            PackageConfig packageConfig = new PackageConfig();
+            packageConfig.setModuleName("gen");
+            packageConfig.setParent(BASE_PACKAGE_URL);
+            generator.setPackageInfo(packageConfig);
+
+            // 配置自定义代码模板
+            TemplateConfig templateConfig = new TemplateConfig();
+            templateConfig.setXml(XML_MAPPER_TEMPLATE_PATH);
+            templateConfig.setMapper(MAPPER_TEMPLATE_PATH);
+            templateConfig.setEntity(ENTITY_TEMPLATE_PATH);
+            templateConfig.setService(SERVICE_TEMPLATE_PATH);
+            templateConfig.setServiceImpl(SERVICE_IMPL_TEMPLATE_PATH);
+            templateConfig.setController(CONTROLLER_TEMPLATE_PATH);
+            generator.setTemplate(templateConfig);
+
+            generator.setTemplateEngine(new FreemarkerTemplateEngine());
+
+            // 策略配置
+            StrategyConfig strategy = new StrategyConfig();
+            strategy.setNaming(NamingStrategy.underline_to_camel);
+            strategy.setColumnNaming(NamingStrategy.underline_to_camel);
+            strategy.setEntityLombokModel(true);
+            strategy.setRestControllerStyle(true);
+//        strategy.setSuperEntityColumns("id");
+            strategy.setControllerMappingHyphenStyle(false);
+            strategy.setTablePrefix(packageConfig.getModuleName() + "_");
+            strategy.setLogicDeleteFieldName("delete_flag");
             strategy.setInclude(input);
             generator.setStrategy(strategy);
 
