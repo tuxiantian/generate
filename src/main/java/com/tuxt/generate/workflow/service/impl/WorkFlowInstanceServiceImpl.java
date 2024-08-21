@@ -1,12 +1,15 @@
 package com.tuxt.generate.workflow.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.tuxt.generate.workflow.WorkflowStatus;
 import com.tuxt.generate.workflow.entity.WorkFlowInstance;
 import com.tuxt.generate.workflow.mapper.WorkFlowInstanceMapper;
 import com.tuxt.generate.workflow.service.IWorkFlowInstanceService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -15,6 +18,36 @@ import java.util.List;
  */
 @Service
 public class WorkFlowInstanceServiceImpl extends ServiceImpl<WorkFlowInstanceMapper, WorkFlowInstance> implements IWorkFlowInstanceService {
+
+    @Override
+    public void shutdown(Long[] array){
+        List<WorkFlowInstance> list=new ArrayList<>();
+        for (Long id : array) {
+            WorkFlowInstance workFlowInstance=new WorkFlowInstance();
+            workFlowInstance.setId(id);
+            workFlowInstance.setShutdown(1);
+        }
+        this.updateBatchById(list);
+    }
+
+    @Override
+    public WorkFlowInstance getOneShutdown(){
+        LambdaQueryWrapper<WorkFlowInstance> queryWrapper=new LambdaQueryWrapper<>();
+        queryWrapper.eq(WorkFlowInstance::getShutdown,1)
+                .eq(WorkFlowInstance::getStatus,WorkflowStatus.runing.name()).orderByAsc(WorkFlowInstance::getId);
+        WorkFlowInstance workFlowInstance = this.getOne(queryWrapper);
+        WorkFlowInstance update=new WorkFlowInstance();
+        update.setShutdown(0);
+        update.setVersion(workFlowInstance.getVersion()+1);
+        LambdaUpdateWrapper<WorkFlowInstance> updateWrapper=new LambdaUpdateWrapper<>();
+                updateWrapper.eq(WorkFlowInstance::getVersion,workFlowInstance.getVersion())
+                        .eq(WorkFlowInstance::getId,workFlowInstance.getId());
+        boolean updated = this.update(update, updateWrapper);
+        if (updated){
+            return workFlowInstance;
+        }
+        return null;
+    }
 
     @Override
     public void updateStatus(Long id, WorkflowStatus status, String lastTask, String context, String errorMessage) {

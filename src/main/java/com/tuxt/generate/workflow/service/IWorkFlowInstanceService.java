@@ -9,7 +9,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface IWorkFlowInstanceService extends IService<WorkFlowInstance> {
 
-    void updateStatus(Long id, WorkflowStatus status, String lastTask,String context, String errorMessage);
+    void shutdown(Long[] array);
+
+    WorkFlowInstance getOneShutdown();
+
+    void updateStatus(Long id, WorkflowStatus status, String lastTask, String context, String errorMessage);
 
     void updateStatus(Long id, String errorMessage);
 

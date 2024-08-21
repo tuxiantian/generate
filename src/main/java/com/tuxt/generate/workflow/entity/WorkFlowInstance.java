@@ -43,4 +43,6 @@ private static final long serialVersionUID = 1L;
     private java.util.Date updateDate;
 
     private Integer version;
+
+    private Integer shutdown;
 }

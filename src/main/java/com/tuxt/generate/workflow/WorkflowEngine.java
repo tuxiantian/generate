@@ -12,9 +12,14 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
 @Slf4j
@@ -24,6 +29,16 @@ public class WorkflowEngine implements CommandLineRunner , ApplicationListener<W
     @Resource
     private ApplicationContext applicationContext;
     private final Map<String, Task> taskMap = new ConcurrentHashMap<String, Task>();
+    Queue<Long> queue = new ConcurrentLinkedQueue<>();
+    AtomicBoolean hasShutdown=new AtomicBoolean(true);
+
+    @PreDestroy
+    public void shutdown() {
+        if (!queue.isEmpty()) {
+            Long[] array = (Long[]) queue.toArray();
+            workFlowInstanceService.shutdown(array);
+        }
+    }
 
     @Override
     public void run(String... args) throws Exception {
@@ -31,12 +46,26 @@ public class WorkflowEngine implements CommandLineRunner , ApplicationListener<W
         taskMap.putAll(beansMap);
     }
 
+    @PostConstruct
+    public void processShutdown(){
+        while (hasShutdown.get()){
+            WorkFlowInstance workFlowInstance = workFlowInstanceService.getOneShutdown();
+            if (workFlowInstance!=null){
+                execute(workFlowInstance.getId());
+            }else {
+                hasShutdown.getAndSet(false);
+            }
+        }
+    }
+
 
     @Async("myAsyncExecutor")
     @Override
     public void onApplicationEvent(WorkFlowEvent event) {
         Long workFlowInstanceId = (Long) event.getSource();
+        queue.add(workFlowInstanceId);
         execute(workFlowInstanceId);
+        queue.remove(workFlowInstanceId);
     }
 
     private void execute(Long workFlowInstanceId) {
