@@ -114,7 +114,7 @@ public class WorkflowEngine implements CommandLineRunner , ApplicationListener<W
                             }
                         }
 
-                        if (attempts==retryThreshold){
+                        if (taskStatus.equals(TaskStatus.runing) && attempts==retryThreshold){
                             String errorMessage=String.format("已经尝试了%d次，工作流程结束",retryThreshold);
                             workFlowInstanceService.updateStatus(workFlowInstanceId,WorkflowStatus.fail,tasks[lastTask],JSON.toJSONString(context),errorMessage);
                             return;
