@@ -4,12 +4,14 @@ import com.tuxt.generate.workflow.WorkflowStatus;
 import com.tuxt.generate.workflow.entity.WorkFlowInstance;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
 * @author tuxt
 */
 public interface IWorkFlowInstanceService extends IService<WorkFlowInstance> {
 
-    void shutdown(Long[] array);
+    void shutdown(List<Long> array);
 
     WorkFlowInstance getOneShutdown();
 

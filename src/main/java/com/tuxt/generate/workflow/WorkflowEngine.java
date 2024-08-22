@@ -14,11 +14,11 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -33,9 +33,11 @@ public class WorkflowEngine implements CommandLineRunner , ApplicationListener<W
 
     @PreDestroy
     public void shutdown() {
+        System.out.println("shutdown");
         if (!queue.isEmpty()) {
-            Long[] array = (Long[]) queue.toArray();
-            workFlowInstanceService.shutdown(array);
+            List<Long> elementsList = new ArrayList<>(queue);
+            System.out.println(JSON.toJSON(elementsList));
+            workFlowInstanceService.shutdown(elementsList);
         }
     }
 

@@ -20,12 +20,13 @@ import java.util.List;
 public class WorkFlowInstanceServiceImpl extends ServiceImpl<WorkFlowInstanceMapper, WorkFlowInstance> implements IWorkFlowInstanceService {
 
     @Override
-    public void shutdown(Long[] array){
+    public void shutdown(List<Long> array){
         List<WorkFlowInstance> list=new ArrayList<>();
         for (Long id : array) {
             WorkFlowInstance workFlowInstance=new WorkFlowInstance();
             workFlowInstance.setId(id);
             workFlowInstance.setShutdown(1);
+            list.add(workFlowInstance);
         }
         this.updateBatchById(list);
     }

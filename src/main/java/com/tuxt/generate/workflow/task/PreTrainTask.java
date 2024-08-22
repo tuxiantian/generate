@@ -17,6 +17,7 @@ public class PreTrainTask implements Task {
     @Override
     public TaskStatus handle(Context context) {
         try {
+            Thread.sleep(30000);
             System.out.println("PreTrainTask finish");
         }catch (Exception e){
             log.error("PreTrainTaskError",e);
