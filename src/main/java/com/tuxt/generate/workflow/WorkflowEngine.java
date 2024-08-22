@@ -14,11 +14,13 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -30,6 +32,7 @@ public class WorkflowEngine implements CommandLineRunner , ApplicationListener<W
     private final Map<String, Task> taskMap = new ConcurrentHashMap<String, Task>();
     Queue<Long> queue = new ConcurrentLinkedQueue<>();
     AtomicBoolean hasShutdown=new AtomicBoolean(true);
+    int retryThreshold=5;
 
     @PreDestroy
     public void shutdown() {
@@ -80,8 +83,10 @@ public class WorkflowEngine implements CommandLineRunner , ApplicationListener<W
         context.setWorkFlowInstanceId(workFlowInstanceId);
         while (lastTask < tasks.length) {
             try {
+                int attempts=0;
                 workFlowInstanceService.updateStatus(workFlowInstanceId,WorkflowStatus.runing,tasks[lastTask],JSON.toJSONString(context));
                 TaskStatus taskStatus = taskMap.get(tasks[lastTask]).handle(context);
+
                 switch (taskStatus) {
                     case finish:
                         lastTask++;
@@ -94,6 +99,25 @@ public class WorkflowEngine implements CommandLineRunner , ApplicationListener<W
                             Thread.sleep(10000);
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
+                        }
+
+                        while (attempts<retryThreshold){
+                            taskStatus = taskMap.get(tasks[lastTask]).handle(context);
+                            attempts=attempts+1;
+                            if (taskStatus.equals(TaskStatus.finish)){
+                                lastTask++;
+                                break;
+                            }
+                            if (taskStatus.equals(TaskStatus.fail)){
+                                workFlowInstanceService.updateStatus(workFlowInstanceId,WorkflowStatus.fail,tasks[lastTask],JSON.toJSONString(context));
+                                return;
+                            }
+                        }
+
+                        if (attempts==retryThreshold){
+                            String errorMessage=String.format("已经尝试了%d次，工作流程结束",retryThreshold);
+                            workFlowInstanceService.updateStatus(workFlowInstanceId,WorkflowStatus.fail,tasks[lastTask],JSON.toJSONString(context),errorMessage);
+                            return;
                         }
                         break;
                 }

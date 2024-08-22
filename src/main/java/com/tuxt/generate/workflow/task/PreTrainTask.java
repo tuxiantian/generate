@@ -17,8 +17,12 @@ public class PreTrainTask implements Task {
     @Override
     public TaskStatus handle(Context context) {
         try {
-            Thread.sleep(30000);
+//            Thread.sleep(30000);
             System.out.println("PreTrainTask finish");
+            if (true){
+                return TaskStatus.runing;
+            }
+
         }catch (Exception e){
             log.error("PreTrainTaskError",e);
             workFlowInstanceService.updateStatus(context.getWorkFlowInstanceId(), ExceptionUtils.getMessage(e));
