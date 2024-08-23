@@ -21,3 +21,10 @@ mybatis-plus:
 server:
   port: 8081
   shutdown: graceful
+rocketmq:
+  name-server: localhost:9876  # RocketMQ NameServer 地址
+  producer:
+    group: springboot-producer-group # 生产者组
+  consumer:
+    group: springboot-consumer-group # 消费者组
+    topic: TopicTest # 订阅的主题
