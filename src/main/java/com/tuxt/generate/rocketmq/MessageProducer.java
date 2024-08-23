@@ -1,4 +1,4 @@
-package com.tuxt.generate.workflow;
+package com.tuxt.generate.rocketmq;
 
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;

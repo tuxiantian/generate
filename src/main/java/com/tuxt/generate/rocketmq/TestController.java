@@ -1,4 +1,4 @@
-package com.tuxt.generate.workflow.controller;
+package com.tuxt.generate.rocketmq;
 
 import com.tuxt.generate.workflow.MessageProducer;
 import com.tuxt.generate.workflow.WorkFlow;
