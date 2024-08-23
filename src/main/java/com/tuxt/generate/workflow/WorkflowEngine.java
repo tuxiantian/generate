@@ -51,7 +51,10 @@ public class WorkflowEngine implements CommandLineRunner , ApplicationListener<W
         while (hasShutdown.get()){
             WorkFlowInstance workFlowInstance = workFlowInstanceService.getOneShutdown();
             if (workFlowInstance!=null){
-                execute(workFlowInstance.getId());
+                boolean updateVersion = workFlowInstanceService.updateVersion(workFlowInstance.getId(), workFlowInstance.getVersion());
+                if (updateVersion) {
+                    execute(workFlowInstance.getId());
+                }
             }else {
                 hasShutdown.getAndSet(false);
             }

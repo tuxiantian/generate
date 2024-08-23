@@ -36,21 +36,18 @@ public class WorkFlowInstanceServiceImpl extends ServiceImpl<WorkFlowInstanceMap
         LambdaQueryWrapper<WorkFlowInstance> queryWrapper=new LambdaQueryWrapper<>();
         queryWrapper.eq(WorkFlowInstance::getShutdown,1)
                 .eq(WorkFlowInstance::getStatus,WorkflowStatus.runing.name()).orderByAsc(WorkFlowInstance::getId);
-        WorkFlowInstance workFlowInstance = this.getOne(queryWrapper);
-        if (workFlowInstance==null){
-            return null;
-        }
+        return this.getOne(queryWrapper);
+    }
+
+    @Override
+    public boolean updateVersion(Long id,Integer version){
         WorkFlowInstance update=new WorkFlowInstance();
         update.setShutdown(0);
-        update.setVersion(workFlowInstance.getVersion()+1);
+        update.setVersion(version+1);
         LambdaUpdateWrapper<WorkFlowInstance> updateWrapper=new LambdaUpdateWrapper<>();
-                updateWrapper.eq(WorkFlowInstance::getVersion,workFlowInstance.getVersion())
-                        .eq(WorkFlowInstance::getId,workFlowInstance.getId());
-        boolean updated = this.update(update, updateWrapper);
-        if (updated){
-            return workFlowInstance;
-        }
-        return null;
+        updateWrapper.eq(WorkFlowInstance::getVersion,version)
+                .eq(WorkFlowInstance::getId,id);
+        return this.update(update, updateWrapper);
     }
 
     @Override
