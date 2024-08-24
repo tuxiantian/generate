@@ -1,6 +1,10 @@
 spring:
   application:
     name: generate
+  servlet:
+    multipart:
+      max-file-size: 2MB
+      max-request-size: 10MB
   lifecycle:
     timeout-per-shutdown-phase: 30s
   mvc:

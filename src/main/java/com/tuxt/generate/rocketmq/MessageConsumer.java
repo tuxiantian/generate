@@ -17,16 +17,4 @@ public class MessageConsumer implements RocketMQListener<String> {
         System.out.printf("Received message: %s%n", message);
     }
 
-    @RestController
-    public static class TestController {
-        @Autowired
-        private MessageProducer messageProducer;
-
-        @GetMapping("/sendMessage")
-        public String sendMessage(@RequestParam String message) {
-            messageProducer.sendMessage("TopicTest", message);
-            return "Message sent: " + message;
-        }
-
-    }
 }
