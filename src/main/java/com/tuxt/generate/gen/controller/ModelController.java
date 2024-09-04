@@ -27,11 +27,5 @@ public class ModelController {
 
     }
 
-    @GetMapping("batchSave")
-    public String batchSave(){
-        List<Long> list= Arrays.asList(7L);
-        workFlowInstanceService.shutdown(list);
-        return "ok";
-    }
 }
 
