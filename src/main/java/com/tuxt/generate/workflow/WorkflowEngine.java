@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
@@ -29,6 +30,9 @@ public class WorkflowEngine implements CommandLineRunner , ApplicationListener<W
     private IWorkFlowInstanceService workFlowInstanceService;
     @Resource
     private ApplicationContext applicationContext;
+
+    @Resource
+    private ThreadPoolExecutor dtpExecutor1;
     private final Map<String, Task> taskMap = new ConcurrentHashMap<String, Task>();
     Queue<Long> queue = new ConcurrentLinkedQueue<>();
     AtomicBoolean hasShutdown=new AtomicBoolean(true);
@@ -62,13 +66,15 @@ public class WorkflowEngine implements CommandLineRunner , ApplicationListener<W
     }
 
 
-    @Async("myAsyncExecutor")
     @Override
     public void onApplicationEvent(WorkFlowEvent event) {
-        Long workFlowInstanceId = (Long) event.getSource();
-        queue.add(workFlowInstanceId);
-        execute(workFlowInstanceId);
-        queue.remove(workFlowInstanceId);
+        dtpExecutor1.execute(()->{
+            Long workFlowInstanceId = (Long) event.getSource();
+            queue.add(workFlowInstanceId);
+            execute(workFlowInstanceId);
+            queue.remove(workFlowInstanceId);
+        });
+
     }
 
     private void execute(Long workFlowInstanceId) {

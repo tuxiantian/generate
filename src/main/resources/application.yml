@@ -32,3 +32,25 @@ rocketmq:
   consumer:
     group: springboot-consumer-group # 消费者组
     topic: TopicTest # 订阅的主题
+nacos:
+  config:
+    server-addr: 127.0.0.1:8848
+    username: nacos
+    password: nacos
+    type: yaml
+    data-ids: generate-dtp-dev.yml
+    auto-refresh: true
+    group: DEFAULT_GROUP
+    bootstrap:
+        enable: true
+        log-enable: true
+
+management:
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: [health, metrics, info, prometheus]
