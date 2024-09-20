@@ -27,7 +27,7 @@ public class CodeGenerator {
     // @author 值
     private static final String AUTHOR = "tuxiantian";
     // 包的基础路径
-    private static final String BASE_PACKAGE_URL = "com.fawkes.project.user.common";
+    private static final String BASE_PACKAGE_URL = "com.tuxt.generate";
     // xml文件路径
     private static final String XML_PACKAGE_URL = "/src/main/resources/mapper/";
     // xml 文件模板
@@ -62,12 +62,13 @@ public class CodeGenerator {
             // 全局配置
             GlobalConfig globalConfig = new GlobalConfig();
             String projectPath = System.getProperty("user.dir");
-            projectPath="C:\\workspace\\cybereng-user-api";
+//            projectPath="C:\\workspace\\cybereng-user-api";
+            projectPath="C:\\Users\\tuxia\\Documents\\idea\\generate";
             globalConfig.setOutputDir(projectPath + "/src/main/java");
             globalConfig.setAuthor(AUTHOR);
             globalConfig.setOpen(false);
             globalConfig.setFileOverride(false);
-            globalConfig.setSwagger2(true);
+            globalConfig.setSwagger2(false);
             globalConfig.setBaseColumnList(true);
             globalConfig.setBaseResultMap(true);
             generator.setGlobalConfig(globalConfig);
@@ -82,7 +83,7 @@ public class CodeGenerator {
 
             // 包配置
             PackageConfig packageConfig = new PackageConfig();
-            packageConfig.setModuleName("gen");
+            packageConfig.setModuleName("order");
             packageConfig.setParent(BASE_PACKAGE_URL);
             generator.setPackageInfo(packageConfig);
 
