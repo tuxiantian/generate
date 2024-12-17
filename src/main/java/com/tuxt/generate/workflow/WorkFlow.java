@@ -4,7 +4,7 @@ public enum WorkFlow {
     Train("trainModel","preTrainTask,trainTask,checkTrainTask");
     final String name;
     /**
-     * 工作流中的任务以逗号分隔
+     * 工作流中的任务名称以逗号分隔,任务名称是类名首字符小写
      */
     final String taskSequence;
 
