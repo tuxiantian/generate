@@ -5,11 +5,11 @@ import com.tuxt.generate.workflow.entity.WorkFlowInstance;
 import com.tuxt.generate.workflow.service.IWorkFlowInstanceService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
@@ -36,6 +36,9 @@ public class WorkflowEngine implements CommandLineRunner , ApplicationListener<W
     private final Map<String, Task> taskMap = new ConcurrentHashMap<String, Task>();
     Queue<Long> queue = new ConcurrentLinkedQueue<>();
     AtomicBoolean hasShutdown=new AtomicBoolean(true);
+    /**
+     * 运行中的任务最多尝试次数
+     */
     int retryThreshold=5;
 
     @PreDestroy
@@ -44,10 +47,16 @@ public class WorkflowEngine implements CommandLineRunner , ApplicationListener<W
         if (!queue.isEmpty()) {
             List<Long> elementsList = new ArrayList<>(queue);
             System.out.println(JSON.toJSON(elementsList));
+            //停止服务时，将工作流队列中的流程更新为shutdown状态，服务启动后会加载这种状态的工作流再次执行
             workFlowInstanceService.shutdown(elementsList);
         }
     }
 
+    /**
+     * 服务启动后加载shutdown状态的工作流再次执行
+     * @param args
+     * @throws Exception
+     */
     @Override
     public void run(String... args) throws Exception {
         Map<String, Task> beansMap = applicationContext.getBeansOfType(Task.class);
@@ -67,7 +76,7 @@ public class WorkflowEngine implements CommandLineRunner , ApplicationListener<W
 
 
     @Override
-    public void onApplicationEvent(WorkFlowEvent event) {
+    public void onApplicationEvent(@NotNull WorkFlowEvent event) {
         dtpExecutor1.execute(()->{
             Long workFlowInstanceId = (Long) event.getSource();
             queue.add(workFlowInstanceId);
@@ -83,7 +92,7 @@ public class WorkflowEngine implements CommandLineRunner , ApplicationListener<W
             log.error("WorkFlowInstance {} not exists ",workFlowInstanceId);
         }
         WorkFlow workFlow = WorkFlow.getByName(workFlowInstance.getName());
-        String[] tasks = workFlow.getTaskTemplate().split(",");
+        String[] tasks = workFlow.getTaskSequence().split(",");
         int lastTask = 0;
         if (workFlowInstance.getLastTask()!=null){
             lastTask =WorkFlow.getIndexByName(workFlow,workFlowInstance.getLastTask());
@@ -137,7 +146,7 @@ public class WorkflowEngine implements CommandLineRunner , ApplicationListener<W
 
 
         }
-
+        //任务执行完成
         workFlowInstanceService.updateStatus(workFlowInstanceId,WorkflowStatus.finish,tasks[tasks.length-1],JSON.toJSONString(context));
     }
 }

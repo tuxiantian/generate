@@ -3,12 +3,15 @@ package com.tuxt.generate.workflow;
 public enum WorkFlow {
     Train("trainModel","preTrainTask,trainTask,checkTrainTask");
     final String name;
-    final String taskTemplate;
+    /**
+     * 工作流中的任务以逗号分隔
+     */
+    final String taskSequence;
 
 
     WorkFlow(String name, String taskTemplate) {
         this.name=name;
-        this.taskTemplate=taskTemplate;
+        this.taskSequence =taskTemplate;
     }
 
     public static WorkFlow getByName(String name){
@@ -21,7 +24,7 @@ public enum WorkFlow {
     }
 
     public static  int getIndexByName(WorkFlow workFlow,String name){
-        String[] tasks = workFlow.taskTemplate.split(",");
+        String[] tasks = workFlow.taskSequence.split(",");
         for (int i = 0; i < tasks.length; i++) {
             if (tasks[i].equals(name)){
                 return i;
@@ -34,11 +37,11 @@ public enum WorkFlow {
         return name;
     }
 
-    public String getTaskTemplate() {
-        return taskTemplate;
+    public String getTaskSequence() {
+        return taskSequence;
     }
 
     public String getFirstTask(){
-        return this.taskTemplate.split(",")[0];
+        return this.taskSequence.split(",")[0];
     }
 }
